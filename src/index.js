@@ -1,8 +1,25 @@
-const app = require('./app');
+const { config } = require('./config');
+const express = require('express');
+const cors = require('cors');
+const app = express();
+
+const authApi = require('./routes/auth');
 
 async function main() {
-  await app.listen(4000);
-  console.log('Server on port 4000');
+  // settings
+  app.set('port', config.port);
+
+  //middlewares
+  app.use(cors());
+
+  //bodyparser
+  app.use(express.json());
+
+  //routes
+  authApi(app);
+
+  await app.listen(config.port);
+  console.log(`Listening http://localhost:${config.port}`);
 }
 
 main();
