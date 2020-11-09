@@ -1,18 +1,60 @@
 const { config } = require('../config');
 const express = require('express');
-const passport = require('passport');
-const boom = require('@hapi/boom');
 const { check, validationResult } = require('express-validator');
 const jwt = require('jsonwebtoken');
 
 //user controller
 const UserService = require('../services/users');
-//user model
-const Users = require('../models/Users');
+//basic strategy
+require('../utils/auth/strategies/basic');
+
 function authApi(app) {
   const router = express.Router();
   app.use('/api/auth', router);
   const usersService = new UserService();
+
+  router.post(
+    '/sign-in',
+    [
+      check('email', 'Please provide an email').isEmail(),
+      check(
+        'password',
+        'Please provide the password min 6 characters'
+      ).exists(),
+    ],
+    async function (req, res, next) {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+      }
+      const { email } = req.body;
+      try {
+        let user = await usersService.getUser({ email });
+        // sign a jsonwebtoken
+        const payload = {
+          user: {
+            id: user._id,
+          },
+        };
+
+        jwt.sign(
+          payload,
+          config.authJwtSecret,
+          {
+            expiresIn: 36000,
+          },
+          (err, token) => {
+            if (err) throw err;
+            res.status(200).json({ token });
+          }
+        );
+      } catch (error) {
+        console.error(err.message);
+        res.status(500).send('server error');
+      }
+    }
+  );
+
   router.post(
     '/sign-up',
     [
@@ -39,10 +81,9 @@ function authApi(app) {
         if (userExist)
           return res.status(400).json({ msg: 'user already exist' });
         let createUserId = await usersService.createUser({ user });
-
         const payload = {
           user: {
-            id: user.id,
+            id: createUserId,
           },
         };
         jwt.sign(
@@ -63,7 +104,7 @@ function authApi(app) {
         });*/
       } catch (error) {
         console.error(error.message);
-        res.status(500).send('server error');
+        res.status(500).send('server error in sign-up');
       }
     }
   );
