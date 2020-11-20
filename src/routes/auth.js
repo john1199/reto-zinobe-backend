@@ -2,11 +2,14 @@ const { config } = require('../config');
 const express = require('express');
 const { check, validationResult } = require('express-validator');
 const jwt = require('jsonwebtoken');
+const boom = require('@hapi/boom');
 
 //user controller
 const UserService = require('../services/users');
+const passport = require('passport');
+const { use } = require('passport');
 //basic strategy
-require('../utils/auth/strategies/basic');
+require('../utils/strategies/basic');
 
 function authApi(app) {
   const router = express.Router();
@@ -23,35 +26,49 @@ function authApi(app) {
       ).exists(),
     ],
     async function (req, res, next) {
-      const errors = validationResult(req);
+      const errors = validationResult(req.body);
       if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
       }
       const { email } = req.body;
-      try {
-        let user = await usersService.getUser({ email });
-        // sign a jsonwebtoken
-        const payload = {
-          user: {
-            id: user._id,
-          },
-        };
-
-        jwt.sign(
-          payload,
-          config.authJwtSecret,
-          {
-            expiresIn: 36000,
-          },
-          (err, token) => {
-            if (err) throw err;
-            res.status(200).json({ token });
+      passport.authenticate('basic', function (error, user) {
+        try {
+          console.log(user);
+          if (error || !user) {
+            next(boom.unauthorized());
           }
-        );
-      } catch (error) {
-        console.error(err.message);
-        res.status(500).send('server error');
-      }
+
+          req.login(user, { session: false }, async function (error) {
+            if (error) {
+              next(error);
+            }
+            const { name } = user;
+            // sign a jsonwebtoken
+
+            const payload = {
+              user: {
+                sub: user._id,
+                name: user.name,
+                email: user.email,
+              },
+            };
+
+            jwt.sign(
+              payload,
+              config.authJwtSecret,
+              {
+                expiresIn: '15m',
+              },
+              (err, token) => {
+                if (err) throw err;
+                res.status(200).json({ token, user: { name, email } });
+              }
+            );
+          });
+        } catch (error) {
+          next(error);
+        }
+      })(req, res, next);
     }
   );
 
@@ -70,20 +87,22 @@ function authApi(app) {
       check('team', 'Please provide the team').exists(),
     ],
     async function (req, res, next) {
-      const errors = validationResult(req);
+      const errors = validationResult(req.body);
       if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
       }
-      const { body: user } = req;
       const { email } = user;
       try {
         let userExist = await usersService.getUser({ email });
         if (userExist)
           return res.status(400).json({ msg: 'user already exist' });
         let createUserId = await usersService.createUser({ user });
+
         const payload = {
           user: {
-            id: createUserId,
+            sub: createUserId,
+            name: user.name,
+            email: user.email,
           },
         };
         jwt.sign(
@@ -97,14 +116,8 @@ function authApi(app) {
             res.send({ token });
           }
         );
-
-        /*res.status(201).json({
-          data: createUserId,
-          message: 'user created',
-        });*/
       } catch (error) {
-        console.error(error.message);
-        res.status(500).send('server error in sign-up');
+        next(error);
       }
     }
   );

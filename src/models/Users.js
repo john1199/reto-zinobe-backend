@@ -34,24 +34,11 @@ const userSchema = new mongoose.Schema({
       'CTO',
     ],
   },
+  isAdmin: {
+    type: Boolean,
+    required: true,
+  },
 });
 
 module.exports = mongoose.model('user', userSchema);
 
-/*
-const createUserSchema = {
-  ...userSchema,
-  isAdmin: joi.boolean(),
-};
-
-const createProviderUserSchema = {
-  ...userSchema,
-  apiKeyToken: joi.string().required(),
-};
-*/
-/*module.exports = {
-  userIdSchema,
-  createUserSchema,
-  createProviderUserSchema,
-};
-*/

@@ -4,6 +4,13 @@ const cors = require('cors');
 const app = express();
 
 const authApi = require('./routes/auth');
+const {
+  logErrors,
+  wrapErrors,
+  errorHandler,
+} = require('./utils/middleware/errorHandlers.js');
+
+const notFoundHandler = require('./utils/middleware/notFoundHandler');
 
 async function main() {
   // settings
@@ -18,6 +25,13 @@ async function main() {
   //routes
   authApi(app);
 
+  // Catch 404
+  app.use(notFoundHandler);
+
+  // Errors middleware
+  app.use(logErrors);
+  app.use(wrapErrors);
+  app.use(errorHandler);
   await app.listen(config.port);
   console.log(`Listening http://localhost:${config.port}`);
 }
