@@ -7,7 +7,6 @@ const boom = require('@hapi/boom');
 //user controller
 const UserService = require('../services/users');
 const passport = require('passport');
-const { use } = require('passport');
 //basic strategy
 require('../utils/strategies/basic');
 
@@ -20,29 +19,28 @@ function authApi(app) {
     '/sign-in',
     [
       check('email', 'Please provide an email').isEmail(),
-      check(
-        'password',
-        'Please provide the password min 6 characters'
-      ).exists(),
+      check('password', 'Please provide the password').exists(),
     ],
     async function (req, res, next) {
+      console.log(req.body);
       const errors = validationResult(req.body);
       if (!errors.isEmpty()) {
+        console.log(errors);
         return res.status(400).json({ errors: errors.array() });
       }
-      const { email } = req.body;
       passport.authenticate('basic', function (error, user) {
         try {
-          console.log(user);
+          //console.log(user);
+          console.log(error);
           if (error || !user) {
-            next(boom.unauthorized());
+            next(boom.unauthorized('no user o error'));
           }
 
           req.login(user, { session: false }, async function (error) {
             if (error) {
               next(error);
             }
-            const { name } = user;
+            const { name, email } = user;
             // sign a jsonwebtoken
 
             const payload = {
@@ -84,18 +82,25 @@ function authApi(app) {
       check('password', 'Please provide the password min 6 characters')
         .exists()
         .isLength({ min: 6 }),
+      check('isAdmin').exists(),
       check('team', 'Please provide the team').exists(),
     ],
     async function (req, res, next) {
       const errors = validationResult(req.body);
       if (!errors.isEmpty()) {
+        console.log('errors');
         return res.status(400).json({ errors: errors.array() });
       }
+      console.log(req.body);
+      const { body: user } = req;
       const { email } = user;
       try {
         let userExist = await usersService.getUser({ email });
-        if (userExist)
+        if (userExist) {
+          console.log('existe');
           return res.status(400).json({ msg: 'user already exist' });
+        }
+
         let createUserId = await usersService.createUser({ user });
 
         const payload = {
