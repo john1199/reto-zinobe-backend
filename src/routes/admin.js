@@ -50,7 +50,7 @@ function adminApi(app) {
 
         res.status(200).json({
           data: updatedUserId,
-          message: 'movie updated',
+          message: 'user updated',
         });
       } catch (err) {
         next(err);
@@ -69,7 +69,7 @@ function adminApi(app) {
 
         res.status(200).json({
           data: deletedUserId,
-          message: 'movie deleted',
+          message: 'user deleted',
         });
       } catch (err) {
         next(err);
@@ -87,7 +87,7 @@ function adminApi(app) {
         console.log(users);
         res.status(200).json({
           data: users,
-          message: 'users retrieved',
+          message: 'seniorities retrieved',
         });
       } catch (error) {
         next(error);
@@ -136,7 +136,7 @@ function adminApi(app) {
 
         res.status(200).json({
           data: senioritiesId,
-          message: 'movie updated',
+          message: 'senioritie updated',
         });
       } catch (err) {
         next(err);
@@ -157,7 +157,7 @@ function adminApi(app) {
 
         res.status(200).json({
           data: deletedsenioritiesId,
-          message: 'movie deleted',
+          message: 'senioritie deleted',
         });
       } catch (err) {
         next(err);
