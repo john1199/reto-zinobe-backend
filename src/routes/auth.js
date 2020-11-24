@@ -22,16 +22,15 @@ function authApi(app) {
       check('password', 'Please provide the password').exists(),
     ],
     async function (req, res, next) {
-      console.log(req.body);
       const errors = validationResult(req.body);
       if (!errors.isEmpty()) {
         console.log(errors);
         return res.status(400).json({ errors: errors.array() });
       }
+
       passport.authenticate('basic', function (error, user) {
         try {
-          //console.log(user);
-          console.log(error);
+          console.log(user);
           if (error || !user) {
             next(boom.unauthorized('no user o error'));
           }
@@ -55,7 +54,7 @@ function authApi(app) {
               payload,
               config.authJwtSecret,
               {
-                expiresIn: '15m',
+                expiresIn: '60m',
               },
               (err, token) => {
                 if (err) throw err;
@@ -101,26 +100,12 @@ function authApi(app) {
           return res.status(400).json({ msg: 'user already exist' });
         }
 
-        let createUserId = await usersService.createUser({ user });
+        let createdUserId = await usersService.createUser({ user });
 
-        const payload = {
-          user: {
-            sub: createUserId,
-            name: user.name,
-            email: user.email,
-          },
-        };
-        jwt.sign(
-          payload,
-          config.authJwtSecret,
-          {
-            expiresIn: 3600,
-          },
-          (err, token) => {
-            if (err) throw err;
-            res.send({ token });
-          }
-        );
+        res.status(201).json({
+          data: createdUserId,
+          message: 'user created',
+        });
       } catch (error) {
         next(error);
       }

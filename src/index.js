@@ -4,6 +4,7 @@ const cors = require('cors');
 const app = express();
 
 const authApi = require('./routes/auth');
+const adminApi = require('./routes/admin');
 const {
   logErrors,
   wrapErrors,
@@ -24,6 +25,7 @@ async function main() {
 
   //routes
   authApi(app);
+  adminApi(app);
 
   // Catch 404
   app.use(notFoundHandler);

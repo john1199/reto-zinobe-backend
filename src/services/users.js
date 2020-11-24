@@ -6,10 +6,15 @@ class UsersService {
     this.collection = 'users';
     this.mongoDB = new MongoLib();
   }
-
+  async getUsers() {
+    const user = await this.mongoDB.getAll(this.collection);
+    return user || [];
+  }
   async getUser({ email }) {
     const [user] = await this.mongoDB.getAll(this.collection, { email });
     return user;
+  }
+  async updateUser({ email }) {
   }
 
   async createUser({ user }) {

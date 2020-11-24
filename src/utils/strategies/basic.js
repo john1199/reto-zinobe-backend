@@ -12,7 +12,6 @@ passport.use(
     try {
       const user = await userService.getUser({ email });
 
-      console.log('asasdads');
       if (!user) {
         return cb(boom.unauthorized('no hay usuario'), false);
       }
