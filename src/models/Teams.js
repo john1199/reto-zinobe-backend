@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const senioritesSchema = new mongoose.Schema({
+const teamsSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
@@ -12,4 +12,4 @@ const senioritesSchema = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model('señorities', senioritesSchema);
+module.exports = mongoose.model('teams', teamsSchema);

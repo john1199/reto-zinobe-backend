@@ -1,4 +1,5 @@
 const { config } = require('../config');
+const passport = require('passport');
 const express = require('express');
 const { check, validationResult } = require('express-validator');
 const jwt = require('jsonwebtoken');
@@ -6,7 +7,6 @@ const boom = require('@hapi/boom');
 
 //user controller
 const UserService = require('../services/users');
-const passport = require('passport');
 //basic strategy
 require('../utils/strategies/basic');
 
@@ -39,14 +39,14 @@ function authApi(app) {
             if (error) {
               next(error);
             }
-            const { name, email } = user;
+            const { _id: id, name, email } = user;
             // sign a jsonwebtoken
 
             const payload = {
               user: {
-                sub: user._id,
-                name: user.name,
-                email: user.email,
+                sub: id,
+                name: name,
+                email: email,
               },
             };
 
@@ -87,7 +87,6 @@ function authApi(app) {
     async function (req, res, next) {
       const errors = validationResult(req.body);
       if (!errors.isEmpty()) {
-        console.log('errors');
         return res.status(400).json({ errors: errors.array() });
       }
       console.log(req.body);
@@ -96,7 +95,6 @@ function authApi(app) {
       try {
         let userExist = await usersService.getUser({ email });
         if (userExist) {
-          console.log('existe');
           return res.status(400).json({ msg: 'user already exist' });
         }
 

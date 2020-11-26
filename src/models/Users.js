@@ -21,6 +21,7 @@ const userSchema = new mongoose.Schema({
     unique: true,
   },
   team: {
+    //toca modificarlo para que quede con el id del modelo de teams
     type: String,
     enum: [
       'Tech Términus',
@@ -35,9 +36,13 @@ const userSchema = new mongoose.Schema({
     ],
   },
   isAdmin: {
-    type: String,
+    type: Boolean,
     required: true,
   },
+  scopes:{
+    type: String,
+    required: true,
+  }
 });
 
 module.exports = mongoose.model('user', userSchema);

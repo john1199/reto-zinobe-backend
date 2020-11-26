@@ -12,6 +12,8 @@ const SenioritiesService = require('../services/seniorities');
 //jwt strategy
 require('../utils/strategies/jwt');
 
+const scopesValidationHandler = require('../utils/middleware/scopesValidation');
+
 function adminApi(app) {
   const router = express.Router();
   app.use('/api/admin', router);
@@ -21,10 +23,10 @@ function adminApi(app) {
   router.get(
     '/users',
     passport.authenticate('jwt', { session: false }),
+    scopesValidationHandler(['read:users']),
     async function (req, res, next) {
       try {
         const users = await usersService.getUsers();
-        console.log(users);
         res.status(200).json({
           data: users,
           message: 'users retrieved',
