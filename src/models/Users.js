@@ -23,27 +23,15 @@ const userSchema = new mongoose.Schema({
   team: {
     //toca modificarlo para que quede con el id del modelo de teams
     type: String,
-    enum: [
-      'Tech Términus',
-      'Tech infraestructura',
-      'Tech Big Data',
-      'Data',
-      'Tech Front´s',
-      'Tech QA',
-      'Diseño',
-      'Tech PM´s',
-      'CTO',
-    ],
   },
   isAdmin: {
     type: Boolean,
     required: true,
   },
-  scopes:{
+  scopes: {
     type: String,
     required: true,
-  }
+  },
 });
 
 module.exports = mongoose.model('user', userSchema);
-

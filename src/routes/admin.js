@@ -40,6 +40,7 @@ function adminApi(app) {
   router.put(
     '/:userId',
     passport.authenticate('jwt', { session: false }),
+    scopesValidationHandler(['update:users']),
     async function (req, res, next) {
       const { userId } = req.params;
       const { body: user } = req;
@@ -63,6 +64,7 @@ function adminApi(app) {
   router.delete(
     '/:userId',
     passport.authenticate('jwt', { session: false }),
+    scopesValidationHandler(['delete:users']),
     async function (req, res, next) {
       const { userId } = req.params;
 
@@ -83,6 +85,7 @@ function adminApi(app) {
   router.get(
     '/seniorities',
     passport.authenticate('jwt', { session: false }),
+    scopesValidationHandler(['read:seniorities']),
     async function (req, res, next) {
       try {
         const users = await senioritiesService.getSeniorities();
@@ -103,6 +106,7 @@ function adminApi(app) {
       check('description', 'Please provide the description').exists(),
     ],
     passport.authenticate('jwt', { session: false }),
+    scopesValidationHandler(['create:seniorities']),
     async function (req, res, next) {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
@@ -126,6 +130,7 @@ function adminApi(app) {
   router.put(
     '/:senioritiesId',
     passport.authenticate('jwt', { session: false }),
+    scopesValidationHandler(['update:seniorities']),
     async function (req, res, next) {
       const { userId } = req.params;
       const { body: user } = req;
@@ -149,6 +154,7 @@ function adminApi(app) {
   router.delete(
     '/:senioritiesId',
     passport.authenticate('jwt', { session: false }),
+    scopesValidationHandler(['delete:seniorities']),
     async function (req, res, next) {
       const { senioritiesId } = req.params;
 

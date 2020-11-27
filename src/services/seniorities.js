@@ -1,5 +1,4 @@
 const MongoLib = require('../database');
-const bcrypt = require('bcrypt');
 
 class SenioritiesService {
   constructor() {
