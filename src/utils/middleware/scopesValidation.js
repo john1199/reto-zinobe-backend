@@ -2,7 +2,6 @@ const boom = require('@hapi/boom');
 
 function scopesValidationHandler(allowedScopes) {
   return function (req, res, next) {
-    console.log(req.user);
     if (!req.user || (req.user && !req.user.scopes)) {
       next(boom.unauthorized('Missing scopes'));
     }

@@ -28,10 +28,6 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     required: true,
   },
-  scopes: {
-    type: String,
-    required: true,
-  },
 });
 
 module.exports = mongoose.model('user', userSchema);

@@ -7,6 +7,7 @@ const boom = require('@hapi/boom');
 
 //user controller
 const UserService = require('../services/users');
+const ScopeKeys = require('../services/scopes');
 //basic strategy
 require('../utils/strategies/basic');
 
@@ -14,7 +15,7 @@ function authApi(app) {
   const router = express.Router();
   app.use('/api/auth', router);
   const usersService = new UserService();
-
+  const scopeKeys = new ScopeKeys();
   router.post(
     '/sign-in',
     [
@@ -30,7 +31,6 @@ function authApi(app) {
 
       passport.authenticate('basic', function (error, user) {
         try {
-          console.log(user);
           if (error || !user) {
             next(boom.unauthorized('no user o error'));
           }
@@ -42,14 +42,15 @@ function authApi(app) {
             const { _id: id, name, email } = user;
             // sign a jsonwebtoken
 
+            const scopes = scopeKeys.scope(user);
             const payload = {
               user: {
                 sub: id,
                 name: name,
                 email: email,
+                scopes: scopes,
               },
             };
-
             jwt.sign(
               payload,
               config.authJwtSecret,
@@ -88,8 +89,7 @@ function authApi(app) {
       const errors = validationResult(req.body);
       if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
-      }
-      console.log(req.body);
+      };
       const { body: user } = req;
       const { email } = user;
       try {

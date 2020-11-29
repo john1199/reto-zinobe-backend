@@ -1,8 +1,6 @@
 const MongoLib = require('../database');
 const bcrypt = require('bcrypt');
 
-const ScopesService = require('../services/scopes');
-const Scopes = new ScopesService();
 class UsersService {
   constructor() {
     this.collection = 'users';
@@ -22,10 +20,8 @@ class UsersService {
     const { identificationCard, name, email, password, isAdmin, team } = user;
     const hashedPassword = await bcrypt.hash(password, 10);
     let booleanIsAdmin = false;
-    let scope = Scopes.isEmploye();
     if (isAdmin || isAdmin == 'Administrador') {
       booleanIsAdmin = true;
-      scope = Scopes.isAdmin();
     }
     const createUserId = await this.mongoDB.create(this.collection, {
       identificationCard,
@@ -34,9 +30,7 @@ class UsersService {
       password: hashedPassword,
       isAdmin: booleanIsAdmin,
       team,
-      scopes: scope,
     });
-    console.log(scope);
     return createUserId;
   }
 }

@@ -12,18 +12,18 @@ passport.use(
     },
     async function (tokenPayload, cb) {
       const usersService = new UsersService();
-
       try {
-        const user = await usersService.getUser({ email: tokenPayload.user.email });
+        const user = await usersService.getUser({
+          email: tokenPayload.user.email,
+        });
 
         if (!user) {
           return cb(boom.unauthorized('no existe'), false);
         }
 
         delete user.password;
-        cb(null, { ...user });
+        cb(null, { ...user, scopes: tokenPayload.user.scopes });
       } catch (error) {
-        console.log('error');
         return cb(error);
       }
     }

@@ -15,18 +15,15 @@ const adminScopes = [
   'delete:teams',
 ];
 
-const publicScopes = [
-  'signin:auth',
-];
+const publicScopes = ['signin:auth'];
 
 class ScopeKeys {
-  constructor() {
-  }
-  isAdmin() {
-    return adminScopes;
-  }
-  isEmploye() {
-    return publicScopes;
+  scope(user) {
+    if (user.isAdmin) {
+      return adminScopes;
+    } else {
+      return publicScopes;
+    }
   }
 }
 module.exports = ScopeKeys;
