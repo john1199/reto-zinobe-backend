@@ -43,6 +43,7 @@ function authApi(app) {
             // sign a jsonwebtoken
 
             const scopes = scopeKeys.scope(user);
+            console.log(user, scopes);
             const payload = {
               user: {
                 sub: id,
@@ -89,7 +90,7 @@ function authApi(app) {
       const errors = validationResult(req.body);
       if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
-      };
+      }
       const { body: user } = req;
       const { email } = user;
       try {

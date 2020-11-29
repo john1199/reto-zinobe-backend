@@ -15,7 +15,7 @@ const adminScopes = [
   'delete:teams',
 ];
 
-const publicScopes = ['signin:auth'];
+const publicScopes = ['signin:auth', 'read:users'];
 
 class ScopeKeys {
   scope(user) {

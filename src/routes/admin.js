@@ -1,8 +1,5 @@
-const { config } = require('../config');
 const express = require('express');
 const { check, validationResult } = require('express-validator');
-const jwt = require('jsonwebtoken');
-const boom = require('@hapi/boom');
 
 const passport = require('passport');
 //user controller

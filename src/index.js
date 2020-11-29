@@ -5,6 +5,7 @@ const app = express();
 
 const authApi = require('./routes/auth');
 const adminApi = require('./routes/admin');
+const employeApi = require('./routes/employe');
 const {
   logErrors,
   wrapErrors,
@@ -26,7 +27,7 @@ async function main() {
   //routes
   authApi(app);
   adminApi(app);
-
+  employeApi(app);
   // Catch 404
   app.use(notFoundHandler);
 
