@@ -37,6 +37,20 @@ class UsersService {
     });
     return createUserId;
   }
+
+  async updateUser({ userId, user }) {
+    const updateUserId = await this.mongoDB.update(
+      this.collection,
+      userId,
+      user
+    );
+    return updateUserId;
+  }
+
+  async deletedUser({ userId }) {
+    const deletedUserId = await this.mongoDB.delete(this.collection, userId);
+    return deletedUserId;
+  }
 }
 
 module.exports = UsersService;

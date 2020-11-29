@@ -27,7 +27,7 @@ class SenioritiesService {
     return createSenioritiesId;
   }
 
-  async updateSeniorities({ senioritieId,  senioritie}) {
+  async updateSeniorities({ senioritieId, senioritie }) {
     const updatedSenioritieId = await this.mongoDB.update(
       this.collection,
       senioritieId,
@@ -37,10 +37,12 @@ class SenioritiesService {
   }
 
   async deleteSeniorities({ senioritiesId }) {
-    const deletedSenioritieId  = await this.mongoDB.delete(this.collection, senioritiesId);
+    const deletedSenioritieId = await this.mongoDB.delete(
+      this.collection,
+      senioritiesId
+    );
     return deletedSenioritieId;
   }
-
 }
 
 module.exports = SenioritiesService;

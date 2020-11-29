@@ -35,7 +35,7 @@ function adminApi(app) {
   );
 
   router.put(
-    '/:userId',
+    '/users/:userId',
     passport.authenticate('jwt', { session: false }),
     scopesValidationHandler(['update:users']),
     async function (req, res, next) {
@@ -59,14 +59,14 @@ function adminApi(app) {
   );
 
   router.delete(
-    '/:userId',
+    '/users/:userId',
     passport.authenticate('jwt', { session: false }),
     scopesValidationHandler(['delete:users']),
     async function (req, res, next) {
       const { userId } = req.params;
 
       try {
-        const deletedUserId = await moviesService.deleteMovie({ userId });
+        const deletedUserId = await usersService.deletedUser({ userId });
 
         res.status(200).json({
           data: deletedUserId,
@@ -86,7 +86,6 @@ function adminApi(app) {
     async function (req, res, next) {
       try {
         const users = await senioritiesService.getSeniorities();
-        console.log(users);
         res.status(200).json({
           data: users,
           message: 'seniorities retrieved',
@@ -125,17 +124,16 @@ function adminApi(app) {
     }
   );
   router.put(
-    '/:senioritiesId',
+    '/seniorities/:senioritieId',
     passport.authenticate('jwt', { session: false }),
     scopesValidationHandler(['update:seniorities']),
     async function (req, res, next) {
-      const { userId } = req.params;
-      const { body: user } = req;
-
+      const { senioritieId } = req.params;
+      const { body: senioritie } = req;
       try {
         const senioritiesId = await senioritiesService.updateSeniorities({
-          userId,
-          user,
+          senioritieId,
+          senioritie,
         });
 
         res.status(200).json({
@@ -149,7 +147,7 @@ function adminApi(app) {
   );
 
   router.delete(
-    '/:senioritiesId',
+    '/seniorities/:senioritiesId',
     passport.authenticate('jwt', { session: false }),
     scopesValidationHandler(['delete:seniorities']),
     async function (req, res, next) {
