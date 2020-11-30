@@ -1,0 +1,9 @@
+{
+  "name": "gamificacion-zinobe",
+  "alias": ["gamificacion-secured-zinobe-api"],
+  "version": 2,
+  "builds": [{ "src": "index.js", "use": "@vercel/node" }],
+  "routes": [{ "src": "/(.*)", "dest": "./src/index.js" }],
+  "env": {
+  }
+}

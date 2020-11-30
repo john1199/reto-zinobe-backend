@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": " nodemon src/index.js"
+    "dev": "set DEBUG=app*&& nodemon ./src/index.js",
+    "start": "set NODE_ENV=production && node ./src/index.js"
   },
   "keywords": [],
   "author": "",
@@ -21,7 +22,8 @@
     "mongoose": "^5.10.12",
     "passport": "^0.4.1",
     "passport-http": "^0.3.0",
-    "passport-jwt": "^4.0.0"
+    "passport-jwt": "^4.0.0",
+    "vercel": "^21.0.1"
   },
   "devDependencies": {
     "nodemon": "^2.0.6",
