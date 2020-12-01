@@ -1,5 +1,6 @@
 const { config } = require('./config');
 const express = require('express');
+import helmet from 'helmet';
 const cors = require('cors');
 const app = express();
 
@@ -18,6 +19,9 @@ async function main() {
   // settings
   app.set('port', config.port);
 
+  app.use(helmet());
+  app.use(helmet.permittedCrossDomainPolicies());
+  app.disable('x-powered-by');
   //middlewares
   app.use(cors());
 
