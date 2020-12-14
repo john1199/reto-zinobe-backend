@@ -5,6 +5,7 @@ const passport = require('passport');
 //user controller
 const UsersService = require('../services/users');
 const SenioritiesService = require('../services/seniorities');
+const TeamsService = require('../services/teams');
 
 //jwt strategy
 require('../utils/strategies/jwt');
@@ -16,6 +17,7 @@ function adminApi(app) {
   app.use('/api/admin', router);
   const usersService = new UsersService();
   const senioritiesService = new SenioritiesService();
+  const teamsService = new TeamsService();
   //USUARIOS
   router.get(
     '/users',
@@ -33,7 +35,6 @@ function adminApi(app) {
       }
     }
   );
-
   router.put(
     '/users/:userId',
     passport.authenticate('jwt', { session: false }),
@@ -57,7 +58,6 @@ function adminApi(app) {
       }
     }
   );
-
   router.delete(
     '/users/:userId',
     passport.authenticate('jwt', { session: false }),
@@ -145,7 +145,6 @@ function adminApi(app) {
       }
     }
   );
-
   router.delete(
     '/seniorities/:senioritiesId',
     passport.authenticate('jwt', { session: false }),
@@ -167,6 +166,96 @@ function adminApi(app) {
       }
     }
   );
+
+  //TEAMS
+  router.get(
+    '/teams',
+    passport.authenticate('jwt', { session: false }),
+    scopesValidationHandler(['read:teams']),
+    async function (req, res, next) {
+      try {
+        const users = await teamsService.getTeams();
+        res.status(200).json({
+          data: users,
+          message: 'teams retrieved',
+        });
+      } catch (error) {
+        next(error);
+      }
+    }
+  );
+  router.post(
+    '/team',
+    [
+      check('name', 'Please provide an name').exists(),
+      check('description', 'Please provide the description').exists(),
+    ],
+    passport.authenticate('jwt', { session: false }),
+    scopesValidationHandler(['create:teams']),
+    async function (req, res, next) {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+      }
+      const { body: team } = req;
+      try {
+        const createTeamId = await teamsService.createTeam({
+          team,
+        });
+
+        res.status(201).json({
+          data: createTeamId,
+          message: 'team created',
+        });
+      } catch (err) {
+        next(err);
+      }
+    }
+  );
+  router.put(
+    '/teams/:teamId',
+    passport.authenticate('jwt', { session: false }),
+    scopesValidationHandler(['update:teams']),
+    async function (req, res, next) {
+      const { teamId } = req.params;
+      const { body: team } = req;
+      try {
+        const UpdateTeamId = await teamsService.updateTeam({
+          teamId,
+          team,
+        });
+
+        res.status(200).json({
+          data: UpdateTeamId,
+          message: 'team updated',
+        });
+      } catch (err) {
+        next(err);
+      }
+    }
+  );
+  router.delete(
+    '/teams/:teamId',
+    passport.authenticate('jwt', { session: false }),
+    scopesValidationHandler(['delete:seniorities']),
+    async function (req, res, next) {
+      const { teamId } = req.params;
+
+      try {
+        const deletedTeamId = await teamsService.deleteTeam(
+          { teamId }
+        );
+
+        res.status(200).json({
+          data: deletedTeamId,
+          message: 'team deleted',
+        });
+      } catch (err) {
+        next(err);
+      }
+    }
+  );
+
 }
 
 module.exports = adminApi;

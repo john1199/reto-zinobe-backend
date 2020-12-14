@@ -36,7 +36,7 @@ class teamsService {
     return updatedTeamId;
   }
 
-  async deleteSeniorities({ teamId }) {
+  async deleteTeam({ teamId }) {
     const deletedTeamId  = await this.mongoDB.delete(this.collection, teamId);
     return deletedTeamId;
   }

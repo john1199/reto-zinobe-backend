@@ -38,7 +38,7 @@ function authApi(app) {
             if (error) {
               next(error);
             }
-            const { _id: id, name, email } = user;
+            const { _id: id, name, email, isAdmin } = user;
             // sign a jsonwebtoken
 
             const scopes = scopeKeys.scope(user);
@@ -47,6 +47,7 @@ function authApi(app) {
                 sub: id,
                 name: name,
                 email: email,
+                isAdmin: isAdmin,
                 scopes: scopes,
               },
             };
@@ -58,11 +59,12 @@ function authApi(app) {
               },
               (err, token) => {
                 if (err) throw err;
-                res.status(200).json({ token, user: { name, email } });
+                res.status(200).json({ token, user: { name, email, isAdmin } });
               }
             );
           });
         } catch (error) {
+          console.log(error);
           next(error);
         }
       })(req, res, next);
