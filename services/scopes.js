@@ -2,6 +2,7 @@ const adminScopes = [
   'signin:auth',
   'signup:auth',
   'read:users',
+  'read:users',
   //'create:users',
   'update:users',
   'delete:users',
@@ -15,7 +16,7 @@ const adminScopes = [
   'delete:teams',
 ];
 
-const publicScopes = ['signin:auth', 'read:users'];
+const publicScopes = ['signin:auth', 'read:user'];
 
 class ScopeKeys {
   scope(user) {

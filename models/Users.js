@@ -20,14 +20,15 @@ const userSchema = new mongoose.Schema({
     unique: true,
   },
   team: {
-    //toca modificarlo para que quede con el id del modelo de teams
     type: String,
+  },
+  points: {
+    type: Object,
   },
   isAdmin: {
     type: Boolean,
     required: true,
   },
 });
-
 
 module.exports = mongoose.model('user', userSchema);

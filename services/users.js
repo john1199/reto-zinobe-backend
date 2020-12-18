@@ -1,10 +1,11 @@
 const MongoLib = require('../database');
 const bcrypt = require('bcrypt');
-
+//const PointsService = require('./points');
 class UsersService {
   constructor() {
     this.collection = 'users';
     this.mongoDB = new MongoLib();
+    //this.pointsService = new PointsService();
   }
   async getUsers() {
     const user = await this.mongoDB.getAll(this.collection);
@@ -21,20 +22,40 @@ class UsersService {
   async updateUser({ email }) {}
 
   async createUser({ user }) {
-    const { identificationCard, name, email, password, isAdmin, team } = user;
-    const hashedPassword = await bcrypt.hash(password, 10);
-    let booleanIsAdmin = false;
-    if (isAdmin || isAdmin == 'Administrador') {
-      booleanIsAdmin = true;
-    }
-    const createUserId = await this.mongoDB.create(this.collection, {
+    let createUserId = null;
+    const {
       identificationCard,
       name,
       email,
-      password: hashedPassword,
-      isAdmin: booleanIsAdmin,
+      password,
+      isAdmin,
       team,
-    });
+      points,
+    } = user;
+    const hashedPassword = await bcrypt.hash(password, 10);
+    let booleanIsAdmin = false;
+    if (isAdmin == 'Administrador') {
+      booleanIsAdmin = true;
+      createUserId = await this.mongoDB.create(this.collection, {
+        identificationCard,
+        name,
+        email,
+        password: hashedPassword,
+        isAdmin: booleanIsAdmin,
+      });
+    } else {
+      //let createPontsId = await this.pointsService.createPoints({ points });
+      createUserId = await this.mongoDB.create(this.collection, {
+        identificationCard,
+        name,
+        email,
+        password: hashedPassword,
+        isAdmin: booleanIsAdmin,
+        team,
+        points,
+      });
+    }
+
     return createUserId;
   }
 
